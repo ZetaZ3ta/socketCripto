@@ -71,6 +71,7 @@ public class Client {
                          else  System.out.println("No s'ha processat correctament la petició.");
                         break;
                     case 2:
+                        outputSt.write(2);
                         if ((int) inputSt.read() == 1)System.out.println("Petició processada correctament.");
                          else System.out.println("No s'ha processat correctament la petició.");
                         
@@ -88,7 +89,6 @@ public class Client {
     }
 
     private static void mostrarLista() throws IOException {
-
         ArrayList<String> listaFicheros = new ArrayList<String>(Arrays.asList(dadesFluxEntrada.readUTF().split(",")));
         for (String listaFichero : listaFicheros) {
             listaFichero = listaFichero.replaceAll("\\[", " ").replaceAll("\\]", "");
