@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -45,17 +46,11 @@ public class Gestor implements Runnable {
         int ok = 0;
         long peticio = -1;
         svr = new Server();
-        System.out.println("Atenent petició del client...");
+        System.out.println("Atendiendo peticiones del cliente");
 
         try {
-
-            fluxEntrada = sckt.getInputStream();
-            fluxSortida = sckt.getOutputStream();
-            dadesFluxSortida = new DataOutputStream(fluxSortida);
-            dadesFluxEntrada = new DataInputStream(fluxEntrada);
-
-            // Pas 3: Llegir i escriure del/o al flux segons el protocol del sòcol.
-            System.out.println("Llegir i escriure del/o al flux segons el protocol del sòcol.");
+            abrirFLujos();
+            System.out.println("Leer y escribir datos mediante el Socket");
             while (peticio != 0) {
                 ok = 0;
                 peticio = fluxEntrada.read();
@@ -68,33 +63,71 @@ public class Gestor implements Runnable {
                 }
                 fluxSortida.write(ok);
             }
-            // Pas 4: Tanquem el flux d'entrada i el flux de sortida.
+            cerrarFlujos();
+            sckt.close();
+        } catch (IOException e) {
+            System.out.println("Se ha producido un error con el cliente = " + cliente);
+        }
+    }
+
+    private void abrirFLujos() {
+        try {
+            fluxEntrada = sckt.getInputStream();
+            fluxSortida = sckt.getOutputStream();
+            dadesFluxEntrada = new DataInputStream(fluxEntrada);
+            dadesFluxSortida = new DataOutputStream(fluxSortida);
+        } catch (IOException e) {
+            System.out.println("Error al establecer canal de datos " + e.getMessage());
+        }
+    }
+
+    private void cerrarFlujos() {
+        try {
             fluxEntrada.close();
             fluxSortida.close();
-
-            // Pas 5: Tanquem el sòcol.
-            sckt.close();
-            // S'ha atès la petició.
         } catch (IOException e) {
-            System.out.println("S'ha produit un error tractant la petició del client ");
+            System.out.println("Erro cerrando Flujos " + e.getMessage());
         }
     }
 
     private int listarFicheros() throws IOException {
-        File[] archivos = _dir.listFiles();
-        int ok=0;
-        if (archivos.length!=0)ok=1;
-        
+        File[] ficheros = _dir.listFiles();
+        int ok = 0;
+        int cont = 0;
+        ArrayList<String> strArchivos = new ArrayList<>();
+        ok = 1;
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        String[] strArchivos = new String[archivos.length];
-        for (int i = 0; i < archivos.length; i++) {
-            strArchivos[i] = String.format("%s  - %d - %s",
-                    archivos[i].getName(),
-                    archivos[i].length(),
-                    sdf.format(archivos[i].lastModified()));
+        for (File fichero : ficheros) {
+            if (!fichero.isHidden()) {
+                cont++;
+                strArchivos.add(String.format("id = %d - Nombre = %s  - Tamaño = %d - Fecha = %s", cont,
+                        fichero.getName(),
+                        fichero.length(),
+                        sdf.format(fichero.lastModified())));
+            }
         }
-        dadesFluxSortida.writeUTF(Arrays.toString(strArchivos));
+        if (cont == 0) {
+            strArchivos.add("No existen ficheros");
+        }
+        escribirDatos(strArchivos.toString());
         return ok;
     }
 
+    public void escribirDatos(int entero) {
+        try {
+            System.out.println(entero);
+            dadesFluxSortida.write(entero);
+        } catch (IOException e) {
+            System.out.println("No se han podido escribir datos en el flujo");
+        }
+    }
+
+    public void escribirDatos(String str) {
+        try {
+            System.out.println(str);
+            dadesFluxSortida.writeUTF(str);
+        } catch (IOException e) {
+            System.out.println("No se han podido escribir datos en el flujo");
+        }
+    }
 }

@@ -32,7 +32,7 @@ public class Client {
     static DataOutputStream dadesFluxSortida;
 
     private static int menu() {
-        System.out.println("Tria una opció: ");
+        System.out.println("Escoja una opción: ");
         System.out.println("****************");
         System.out.println("Opción 1:Listar Ficheros ");
         System.out.println("Opción 2:Descargar Fichero ");
@@ -47,7 +47,7 @@ public class Client {
 
         try {
             // Intentem connectar amb el servidor.
-            System.out.println("Connectant amb el servidor...");
+            System.out.println("Conectando con el servidorr...");
 
             // Pas: 1
             Socket scktClient = new Socket(HOST, PORT);
@@ -64,17 +64,22 @@ public class Client {
                 dadesFluxSortida = new DataOutputStream(outputSt);
 
                 switch (opMenu) {
-                    case 1: // Opció 1
+                    case 1: // Opción 1
                         outputSt.write(1);
                         mostrarLista();
-                        if ((int) inputSt.read()==1)
-                        System.out.println("Petició processada correctament.");
-                    else
-                        System.out.println("No s'ha processat correctament la petició.");
-            		
+                        if ((int) inputSt.read() == 1) System.out.println("Petició processada correctament.");
+                         else  System.out.println("No s'ha processat correctament la petició.");
                         break;
                     case 2:
+                        if ((int) inputSt.read() == 1)System.out.println("Petició processada correctament.");
+                         else System.out.println("No s'ha processat correctament la petició.");
+                        
                         break;
+                    case 0: 
+                        tancaConnexio = 1;
+                        outputSt.write(0);
+                        break;
+
                 }
             }
         } catch (IOException ex) {
@@ -84,20 +89,10 @@ public class Client {
 
     private static void mostrarLista() throws IOException {
 
-        ArrayList<String> listaFicheros= new ArrayList<String>(Arrays.asList(dadesFluxEntrada.readUTF().split(",")));
+        ArrayList<String> listaFicheros = new ArrayList<String>(Arrays.asList(dadesFluxEntrada.readUTF().split(",")));
         for (String listaFichero : listaFicheros) {
-           listaFichero= listaFichero.replaceAll("\\[", " ").replaceAll("\\]","");
+            listaFichero = listaFichero.replaceAll("\\[", " ").replaceAll("\\]", "");
             System.out.println(listaFichero);
         }
-//        for (File file : dir.listFiles()) {
-//                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-//            if (file.isFile()) {
-//                 System.out.println(String.format("%s  - %d - %s",
-//                        file.getName(),
-//                        file.length(),
-//                        sdf.format(file.lastModified()))
-//                 );
-//            }
-//        }
     }
 }
