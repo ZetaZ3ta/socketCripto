@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Logic;
 
 import java.io.DataInputStream;
@@ -67,16 +62,22 @@ public class Client {
                     case 1: // Opción 1
                         outputSt.write(1);
                         mostrarLista();
-                        if ((int) inputSt.read() == 1) System.out.println("Petició processada correctament.");
-                         else  System.out.println("No s'ha processat correctament la petició.");
+                        if ((int) inputSt.read() == 1) {
+                            System.out.println("Petició processada correctament.");
+                        } else {
+                            System.out.println("No s'ha processat correctament la petició.");
+                        }
                         break;
                     case 2:
                         outputSt.write(2);
-                        if ((int) inputSt.read() == 1)System.out.println("Petició processada correctament.");
-                         else System.out.println("No s'ha processat correctament la petició.");
-                        
+                        if ((int) inputSt.read() == 1) {
+                            System.out.println("Petició processada correctament.");
+                        } else {
+                            System.out.println("No s'ha processat correctament la petició.");
+                        }
+
                         break;
-                    case 0: 
+                    case 0:
                         tancaConnexio = 1;
                         outputSt.write(0);
                         break;
